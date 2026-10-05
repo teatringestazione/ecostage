@@ -1,0 +1,103 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*,*::before,*::after{box-sizing:border-box}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Il corpo che ascolta – carte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600;700&display=swap">
+<style>
+/* Layout: mazzo di carte a griglia; a schermo responsive, in stampa A4 2x4 carte per foglio */
+:root{
+  --bg:#f6f4ef; --fg:#26241f; --muted:#6c675d; --card:#ffffff; --line:#dcd6ca;
+  --respiro:#3f7cab; --materia:#86643a; --gesto:#b04a3a; --spazio:#3e7f52;
+  --display:"Baloo 2", "Trebuchet MS", sans-serif; --body:"Nunito", "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1c1b18; --fg:#ece8df; --muted:#a59f93; --card:#272521; --line:#3a3731;
+  --respiro:#7fb2da; --materia:#c9a26e; --gesto:#e3826f; --spazio:#7cc191; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1c1b18; --fg:#ece8df; --muted:#a59f93; --card:#272521; --line:#3a3731;
+  --respiro:#7fb2da; --materia:#c9a26e; --gesto:#e3826f; --spazio:#7cc191; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);line-height:1.45}
+.wrap{max-width:1100px;margin:0 auto;padding-inline:16px;padding-block:28px 48px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,5vw,44px);line-height:1.05;margin:0 0 6px;text-wrap:balance}
+.sub{color:var(--muted);margin:0 0 20px;max-width:65ch}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:28px}
+.rule{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--card)}
+.rule b{font-family:var(--display);font-size:17px;display:block;margin-bottom:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin:0 0 18px;font-weight:700;font-size:13px;letter-spacing:.04em;text-transform:uppercase}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:50%;display:inline-block}
+.deck{display:grid;gap:14px}
+.sheet{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{--c:var(--respiro);background:var(--card);border:2px solid var(--c);border-radius:14px;padding:14px 16px 12px;display:flex;flex-direction:column;gap:6px;min-height:200px;position:relative;break-inside:avoid}
+.card[data-f="materia"]{--c:var(--materia)} .card[data-f="gesto"]{--c:var(--gesto)} .card[data-f="spazio"]{--c:var(--spazio)}
+.top{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--c)}
+.card h3{font-family:var(--display);font-weight:800;font-size:21px;line-height:1.1;margin:2px 0 0;color:var(--fg)}
+.card p{margin:0;font-size:14px}
+.kids{font-size:13px;color:var(--muted);border-top:1px dashed var(--line);padding-top:6px;margin-top:auto}
+.kids b{color:var(--c)}
+.time{font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:no-preference){.card{transition:transform .15s}.card:hover{transform:translateY(-2px)}}
+@page{size:A4;margin:8mm}
+@media print{
+  :root{--bg:#fff;--card:#fff;--fg:#1a1a1a;--muted:#555;--line:#bbb}
+  body{background:#fff}
+  .wrap{max-width:none;padding:0}
+  .intro{break-after:page}
+  .deck{display:block}
+  .sheet{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(4,64mm);gap:4mm;break-after:page;margin:0}
+  .sheet:last-child{break-after:auto}
+  .card{height:auto;min-height:0;padding:4mm 5mm;border-width:1.5pt}
+  .card:hover{transform:none}
+}
+</style>
+<div class="wrap">
+  <section class="intro">
+    <h1>Il corpo che ascolta</h1>
+    <p class="sub">24 carte per costruire laboratori di ecologia del movimento con educatori, bambini e famiglie. Sono tratte dal percorso di Gabriella Catalano nel progetto EcoStage. Materiali: carta riciclata, rami secchi, foglie, stoffe di recupero.</p>
+    <div class="rules">
+      <div class="rule"><b>1. Pescate</b>Una carta per famiglia, in quest'ordine: Respiro, Materia, Gesto, Spazio. Ottenete una sequenza di 20–30 minuti.</div>
+      <div class="rule"><b>2. Ripetete</b>Per un laboratorio di 90 minuti fate tre giri. Rimettete nel mazzo le carte già usate solo a fine giornata.</div>
+      <div class="rule"><b>3. Adattate</b>Ogni carta ha una variante per i bambini. Con gruppi misti (bambini, genitori, educatori) usate la variante per tutti.</div>
+      <div class="rule"><b>4. Chiudete</b>Terminate sempre con la carta Spazio 6, il cerchio finale. All'inizio lo spaesamento è normale: aspettate il primo gesto spontaneo.</div>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--respiro)"></i>Respiro</span>
+      <span><i style="background:var(--materia)"></i>Materia</span>
+      <span><i style="background:var(--gesto)"></i>Gesto</span>
+      <span><i style="background:var(--spazio)"></i>Spazio</span>
+    </div>
+  </section>
+  <section class="deck" id="deck"></section>
+</div>
+<script>
+const F={respiro:"Respiro",materia:"Materia",gesto:"Gesto",spazio:"Spazio"};
+const C=[
+["respiro","Respiro in cerchio","Seduti a terra in cerchio, respirate insieme: quattro tempi per inspirare, quattro per espirare.","Gonfiate un palloncino immaginario nella pancia.",3],
+["respiro","Il respiro dell'oggetto","Guardate l'oggetto al centro e date al suo respiro un ritmo: veloce, lento, interrotto. Muovete una spalla con quel ritmo.","Com'è il respiro di un sasso? E quello di una foglia?",5],
+["respiro","Soffio che sposta","In coppia, uno soffia piano verso il braccio dell'altro, che si muove come spinto dal vento.","Soffiate su una piuma di carta e seguitela con il corpo.",5],
+["respiro","Respiro e voce","Espirando lasciate uscire un suono senza parole. A poco a poco il gruppo trova un suono comune.","Fate il verso di un animale del bosco.",4],
+["respiro","Pausa di ascolto","Un minuto di immobilità a occhi chiusi. Poi ognuno nomina un suono che ha sentito.","Contate i suoni sulle dita.",2],
+["respiro","La stanza che respira","Il gruppo si avvicina al centro inspirando e si allontana espirando.","Diventate un polmone gigante.",5],
+["materia","Carta riciclata","Piegate, accartocciate, strappate un foglio. Ogni azione diventa un movimento del corpo.","Il foglio stanco, il foglio arrabbiato, il foglio felice.",6],
+["materia","Ramo in equilibrio","Camminate tenendo un ramo secco in equilibrio sul palmo. Poi rifate il percorso senza ramo, con la stessa attenzione.","Il ramo è un uccellino che dorme: non svegliatelo.",5],
+["materia","Il sentiero di foglie","Disponete le foglie a terra come un percorso e attraversatelo senza toccarle.","Attraversate il fiume saltando di sasso in sasso.",6],
+["materia","Il telo di tutti","Tutti tengono i bordi di una stoffa di recupero: alzatela, abbassatela, fatela ondeggiare insieme.","Fate passare sotto il telo una persona alla volta.",6],
+["materia","Scatola vuota","Una scatola passa di mano in mano. Ognuno la usa in modo diverso, senza parlare.","La scatola diventa un cappello, una barca, una casa.",5],
+["materia","Il museo dello scarto","Ognuno porta un oggetto che stava per essere buttato e lo presenta con un solo gesto.","Date un nome all'oggetto, come a un animale.",8],
+["gesto","Traduci la piega","Scegliete una forma (una piega, un nodo, una crepa) e traducetela in un movimento di una sola parte del corpo.","Fate la forma con tutto il corpo.",5],
+["gesto","Tre gesti, una frase","Unite tre gesti in una sequenza di 30 secondi da ripetere insieme.","Ogni gesto ha un suono: battito, soffio, schiocco.",8],
+["gesto","Lo specchio","In coppia, uno guida e l'altro rispecchia. Al segnale vi scambiate i ruoli senza fermarvi.","Lo specchio magico che sbaglia una cosa sola.",6],
+["gesto","Gesto rallentato","Prendete un gesto quotidiano (lavarsi le mani, aprire una porta) e fatelo cinque volte più lento.","Muovetevi come se foste sott'acqua.",5],
+["gesto","Il gesto che passa","In cerchio, ricevete il gesto dal vicino, cambiatelo un poco e passatelo al successivo.","Come il gioco del telefono senza fili.",6],
+["gesto","Gesto piccolissimo","Rifate la vostra frase di movimento usando solo le dita o solo gli occhi.","Danzate per una formica.",4],
+["spazio","Il cortile","Riadattate la vostra sequenza a un cortile scolastico. Dove si mette il pubblico?","Ogni angolo del cortile ha un gesto diverso.",8],
+["spazio","Il parco","All'aperto, scegliete un albero come scenografia. Niente luci, niente amplificazione.","Danzate con l'albero: lui sta fermo, voi no.",10],
+["spazio","L'aula","Spostate i banchi e create, con il minimo, uno spazio per danzare.","I banchi diventano isole da raggiungere.",6],
+["spazio","Spazio di protezione","Cerchio stretto: chi sta al centro riceve da ognuno un gesto di cura, senza contatto.","Ognuno regala al centro un gesto gentile.",6],
+["spazio","Tutti insieme","Stessa attività per bambini, genitori ed educatori: come la adattate perché tutti partecipino alla pari?","I bambini insegnano il gesto agli adulti.",8],
+["spazio","Cerchio finale","Ognuno dice una parola su ciò che porta via e un'idea da usare nel proprio servizio.","Una parola e un gesto per salutare.",10]
+];
+const n={respiro:0,materia:0,gesto:0,spazio:0};
+const cards=C.map(([f,t,d,k,m])=>{n[f]++;return `<article class="card" data-f="${f}"><div class="top"><span>${F[f]} ${n[f]}</span><span class="time">${m}′</span></div><h3>${t}</h3><p>${d}</p><p class="kids"><b>Con i bambini:</b> ${k}</p></article>`});
+let h="";for(let i=0;i<cards.length;i+=8)h+=`<div class="sheet">${cards.slice(i,i+8).join("")}</div>`;
+document.getElementById("deck").innerHTML=h;
+</script>
+</body></html>

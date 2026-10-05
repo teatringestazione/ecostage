@@ -1,0 +1,96 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*,*::before,*::after{box-sizing:border-box}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Corpo e cervello – flashcard</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+/* Layout: una carta centrale che si gira al tocco; barra di modalità sopra, avanzamento sotto */
+:root{--bg:#eef1f6;--fg:#1d2330;--muted:#5d6678;--card:#ffffff;--back:#24395e;--backfg:#f2f5fb;--accent:#d9744a;--line:#d5dbe6;
+--display:"Sora","Segoe UI",sans-serif;--body:"Source Sans 3","Segoe UI",sans-serif}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#141820;--fg:#e8ecf3;--muted:#9aa3b5;--card:#1f2531;--back:#30507f;--backfg:#f2f5fb;--accent:#ec9068;--line:#323a4a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141820;--fg:#e8ecf3;--muted:#9aa3b5;--card:#1f2531;--back:#30507f;--backfg:#f2f5fb;--accent:#ec9068;--line:#323a4a;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body)}
+.wrap{max-width:620px;margin:0 auto;padding-inline:16px;padding-block:28px 40px;display:flex;flex-direction:column;gap:16px}
+h1{font-family:var(--display);font-size:clamp(24px,5vw,32px);margin:0;text-wrap:balance}
+.sub{margin:0;color:var(--muted);line-height:1.45}
+.modes{display:flex;gap:8px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer}
+.mode{border:1px solid var(--line);background:var(--card);color:var(--fg);padding:8px 14px;border-radius:999px;font-weight:600}
+.mode[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.scene{perspective:1200px}
+.flip{position:relative;width:100%;min-height:280px;border:0;background:none;padding:0;transform-style:preserve-3d;transition:transform .5s}
+.flip.on{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:18px;padding:28px 24px;display:flex;flex-direction:column;justify-content:center;gap:12px;backface-visibility:hidden;text-align:left}
+.front{background:var(--card);border:1px solid var(--line)}
+.back{background:var(--back);color:var(--backfg);transform:rotateY(180deg)}
+.tag{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--accent)}
+.back .tag{color:#f7c9b4}
+.term{font-family:var(--display);font-size:clamp(26px,6vw,36px);font-weight:700;margin:0}
+.hint{color:var(--muted);font-size:14px}
+.def{font-size:20px;line-height:1.35;margin:0}
+.why{font-size:15px;opacity:.85;margin:0}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.nav button{border:1px solid var(--line);background:var(--card);color:var(--fg);padding:10px 16px;border-radius:10px;font-weight:600}
+.count{font-variant-numeric:tabular-nums;color:var(--muted)}
+.quiz{display:flex;flex-direction:column;gap:10px}
+.qq{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}
+.qq p{font-size:19px;margin:6px 0 0;line-height:1.35}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--card);color:var(--fg);padding:12px 14px;border-radius:10px;font-size:16px}
+.opt.ok{border-color:#2f8a57;background:color-mix(in srgb,#2f8a57 14%,var(--card))}
+.opt.ko{border-color:#c0473d;background:color-mix(in srgb,#c0473d 14%,var(--card))}
+.fb{min-height:22px;color:var(--muted)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.flip{transition:none}}
+</style>
+<div class="wrap">
+  <h1>Corpo e cervello</h1>
+  <p class="sub">Le parole chiave della somatica e delle neuroscienze del movimento, dal lavoro di Sara Mitola nel progetto EcoStage. Tocca la carta per girarla, oppure mettiti alla prova con il quiz.</p>
+  <div class="modes" role="group" aria-label="Modalità">
+    <button class="mode" id="m-cards" aria-pressed="true">Flashcard</button>
+    <button class="mode" id="m-quiz" aria-pressed="false">Quiz</button>
+    <button class="mode" id="shuffle">Mescola</button>
+  </div>
+  <section id="cards">
+    <div class="scene"><button class="flip" id="flip" aria-label="Gira la carta">
+      <div class="face front"><span class="tag" id="ftag"></span><p class="term" id="term"></p><span class="hint">Tocca per vedere la definizione</span></div>
+      <div class="face back"><span class="tag">Definizione</span><p class="def" id="def"></p><p class="why" id="why"></p></div>
+    </button></div>
+    <div class="nav" style="margin-top:14px"><button id="prev">Precedente</button><span class="count" id="count"></span><button id="next">Successiva</button></div>
+  </section>
+  <section id="quiz" class="quiz" hidden>
+    <div class="qq"><span class="tag" id="qnum"></span><p id="qtext"></p></div>
+    <div id="opts" class="quiz"></div>
+    <div class="fb" id="fb" aria-live="polite"></div>
+    <div class="nav"><span class="count" id="score"></span><button id="qnext">Prossima domanda</button></div>
+  </section>
+</div>
+<script>
+const D=[
+["Corpo","Propriocezione","La percezione della posizione e del movimento delle parti del corpo, anche a occhi chiusi.","Aiuta chi vive immobilità o stress a riconnettersi con il proprio corpo."],
+["Corpo","Schema corporeo","La mappa interna del corpo che il cervello usa per organizzare il movimento.","Si impoverisce con l'immobilità; il movimento consapevole la rende più precisa."],
+["Energia","Controllo tonico","La regolazione della tensione muscolare, cioè di quanta forza mettono i muscoli.","Riduce fatica e rigidità."],
+["Energia","Sforzo parassita","La tensione muscolare inutile, che non serve al movimento che si sta facendo.","Eliminarlo è la base dell'economia energetica."],
+["Energia","Economia energetica","Muoversi spendendo solo l'energia necessaria, gestendo peso e respiro.","Rende il movimento sostenibile nel tempo."],
+["Ecologia","Postura ecologica","Una postura scelta con attenzione all'energia, al peso, al respiro e al contatto con l'altro.","Fa del corpo il primo terreno di sostenibilità."],
+["Inclusione","Autoefficacia","La fiducia nella propria capacità di riuscire in un compito.","La danza educativa la rafforza senza imporre canoni estetici."],
+["Inclusione","Partitura elastica","Una sequenza di movimenti che si adatta a qualsiasi limite motorio, fragilità o spazio.","Permette a tutti di partecipare alla stessa creazione."],
+["Metodi","Danza Movimento Terapia","Disciplina che usa il movimento e la danza come strumento di cura, condotta da professionisti formati.","Il laboratorio può proporne le propedeutiche, non sostituirla."],
+["Metodi","Approccio somatico-relazionale","Un modo di lavorare che ricompone il legame tra mente, corpo e ambiente sociale.","Unisce l'ascolto del proprio corpo e la relazione con gli altri."]
+];
+let order=D.map((_,i)=>i),i=0;
+const $=id=>document.getElementById(id);
+function show(){const c=D[order[i]];$("flip").classList.remove("on");$("ftag").textContent=c[0];$("term").textContent=c[1];$("def").textContent=c[2];$("why").textContent=c[3];$("count").textContent=`${i+1} / ${D.length}`}
+$("flip").onclick=()=>$("flip").classList.toggle("on");
+$("next").onclick=()=>{i=(i+1)%D.length;show()};
+$("prev").onclick=()=>{i=(i-1+D.length)%D.length;show()};
+$("shuffle").onclick=()=>{order.sort(()=>Math.random()-.5);i=0;show();if(!$("quiz").hidden)newQ()};
+let q=0,ok=0,done=0;
+function newQ(){const idx=order[q%D.length],c=D[idx];$("qnum").textContent=`Domanda ${done+1}`;$("qtext").textContent=c[2];$("fb").textContent="";
+ const others=D.map((_,k)=>k).filter(k=>k!==idx).sort(()=>Math.random()-.5).slice(0,2);
+ const opts=[idx,...others].sort(()=>Math.random()-.5);
+ $("opts").innerHTML="";opts.forEach(k=>{const b=document.createElement("button");b.className="opt";b.textContent=D[k][1];b.onclick=()=>{if($("opts").dataset.done)return;$("opts").dataset.done=1;done++;
+  if(k===idx){b.classList.add("ok");ok++;$("fb").textContent="Esatto. "+c[3]}else{b.classList.add("ko");[...$("opts").children].find(x=>x.textContent===c[1]).classList.add("ok");$("fb").textContent="Non proprio: la risposta è «"+c[1]+"»."}
+  $("score").textContent=`Punteggio: ${ok} / ${done}`};$("opts").appendChild(b)});delete $("opts").dataset.done}
+$("qnext").onclick=()=>{q++;newQ()};
+function mode(m){$("cards").hidden=m!=="cards";$("quiz").hidden=m!=="quiz";$("m-cards").setAttribute("aria-pressed",m==="cards");$("m-quiz").setAttribute("aria-pressed",m==="quiz");if(m==="quiz"&&!done)newQ()}
+$("m-cards").onclick=()=>mode("cards");$("m-quiz").onclick=()=>mode("quiz");
+$("score").textContent="Punteggio: 0 / 0";show();
+</script>
+</body></html>

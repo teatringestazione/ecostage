@@ -1,0 +1,133 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*,*::before,*::after{box-sizing:border-box}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Mappa del sopralluogo – offline</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:wght@700;800&family=Alegreya+Sans:wght@400;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: pianta del sito a sinistra (si tocca per lasciare un'osservazione), elenco per livello a destra; su telefono in colonna */
+:root{--bg:#eef0ec;--paper:#fbfcfa;--fg:#232724;--muted:#68706a;--rule:#cfd5ce;--grid:#e1e6e0;--accent:#2f6f6a;
+--topo:#7a5c3a;--luce:#c4902a;--acu:#3a6ea5;--mat:#5c7f3b;--lir:#9a4a7a;
+--display:"Alegreya",Georgia,serif;--body:"Alegreya Sans","Segoe UI",sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#171a18;--paper:#202421;--fg:#e6ebe6;--muted:#9aa39c;--rule:#3a403b;--grid:#2a2f2b;--accent:#6fb3ac;--topo:#c49a6c;--luce:#e3b552;--acu:#7aa9dc;--mat:#98c172;--lir:#d68bb9;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#171a18;--paper:#202421;--fg:#e6ebe6;--muted:#9aa39c;--rule:#3a403b;--grid:#2a2f2b;--accent:#6fb3ac;--topo:#c49a6c;--luce:#e3b552;--acu:#7aa9dc;--mat:#98c172;--lir:#d68bb9;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body)}
+.wrap{max-width:1150px;margin:0 auto;padding-inline:16px;padding-block:24px 40px;display:flex;flex-direction:column;gap:14px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(26px,5vw,40px);margin:0;text-wrap:balance}
+.sub{margin:0;color:var(--muted);max-width:70ch;line-height:1.45}
+.filters{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--rule);background:var(--paper);color:var(--fg);border-radius:999px;padding:6px 12px;font:inherit;font-size:14px;cursor:pointer}
+.chip i{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.chip[aria-pressed="false"]{opacity:.45}
+.main{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:820px){.main{grid-template-columns:1fr}}
+.plan{position:relative;aspect-ratio:4/3;max-width:100%;background:var(--paper);border:1px solid var(--rule);border-radius:10px;overflow:hidden;cursor:crosshair;
+ background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:10% 13.333%}
+.plan .n{position:absolute;top:10px;right:12px;font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;line-height:1.1}
+.plan .scale{position:absolute;bottom:10px;left:12px;font-family:var(--mono);font-size:10px;color:var(--muted)}
+.plan .empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;color:var(--muted);pointer-events:none;font-size:15px}
+.pin{position:absolute;transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;background:var(--c);border:2px solid var(--paper);box-shadow:0 0 0 1px var(--c);padding:0;cursor:pointer}
+.pin.sel{outline:3px solid var(--fg);outline-offset:2px}
+.list{display:flex;flex-direction:column;gap:14px;min-width:0}
+.grp h2{font-family:var(--display);font-size:18px;margin:0 0 6px;display:flex;align-items:center;gap:8px}
+.grp h2 i{width:12px;height:12px;border-radius:50%;background:var(--c)}
+.grp h2 small{font-family:var(--mono);font-size:11px;color:var(--muted);font-weight:400}
+.note{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--c);border-radius:6px;padding:8px 10px;font-size:15px;line-height:1.35;display:flex;flex-direction:column;gap:4px}
+.note.sel{box-shadow:0 0 0 2px var(--c)}
+.note .meta{display:flex;justify-content:space-between;gap:8px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.note button{font:inherit;font-size:11px;border:0;background:none;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0}
+.none{color:var(--muted);font-size:14px;margin:0}
+.dlg{position:fixed;inset:0;background:color-mix(in srgb,var(--fg) 35%,transparent);display:flex;align-items:center;justify-content:center;padding:16px}
+.dlg form{background:var(--paper);border-radius:12px;padding:18px;width:min(420px,100%);display:flex;flex-direction:column;gap:12px}
+.dlg h3{font-family:var(--display);margin:0;font-size:20px}
+.layers{display:flex;flex-wrap:wrap;gap:6px}
+.layers label{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--rule);border-radius:999px;padding:5px 10px;font-size:14px;cursor:pointer}
+.layers input{accent-color:var(--accent)}
+textarea{font:inherit;font-size:15px;border:1px solid var(--rule);border-radius:8px;padding:8px;min-height:80px;background:var(--bg);color:var(--fg);resize:vertical}
+.row{display:flex;gap:8px;justify-content:flex-end}
+.btn{font:inherit;font-weight:700;border-radius:8px;padding:8px 14px;cursor:pointer;border:1px solid var(--rule);background:var(--paper);color:var(--fg)}
+.btn.pri{background:var(--accent);color:var(--paper);border-color:var(--accent)}
+.status{font-family:var(--mono);font-size:12px;color:var(--muted);min-height:16px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tools input#who{font:inherit;border:1px solid var(--rule);border-radius:8px;padding:8px 10px;background:var(--paper);color:var(--fg);min-width:0;flex:1 1 180px;max-width:260px}
+.tools label.btn{display:inline-block}
+.confirm{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:10px 12px}
+</style>
+<div class="wrap">
+  <h1>Mappa del sopralluogo</h1>
+  <p class="sub">Versione offline: funziona senza account e senza connessione. Ogni partecipante annota il luogo sul proprio dispositivo, poi esporta le note in un file. Il coordinatore importa tutti i file nella stessa mappa e il gruppo confronta le osservazioni. Strumento tratto dalla regia del paesaggio di Serena Gatti (progetto EcoStage).</p>
+  <div class="tools">
+    <label for="who" class="status">Il tuo nome</label>
+    <input id="who" maxlength="40" placeholder="Es. Gruppo 2 – Anna">
+    <button class="btn" id="exp">Esporta le mie note</button>
+    <label class="btn" for="imp">Importa note del gruppo</label>
+    <input type="file" id="imp" accept=".json,application/json" multiple hidden>
+    <button class="btn" id="csv">Scarica archivio (CSV)</button>
+    <button class="btn" id="clear">Svuota mappa</button>
+  </div>
+  <div class="confirm" id="confirm" hidden><span>Cancellare tutte le note da questo dispositivo? Esportale prima, se ti servono.</span><button class="btn pri" id="yes">Sì, svuota</button><button class="btn" id="no">Annulla</button></div>
+  <div class="filters" id="filters"></div>
+  <div class="status" id="status" aria-live="polite"></div>
+  <div class="main">
+    <div class="plan" id="plan" role="button" tabindex="0" aria-label="Pianta del sito: tocca per aggiungere un'osservazione">
+      <div class="n">N<br>↑</div><div class="scale">1 quadrato ≈ 10 passi</div>
+      <div class="empty" id="empty">Nessuna osservazione ancora. Tocca un punto della pianta per lasciare la prima.</div>
+    </div>
+    <div class="list" id="list"></div>
+  </div>
+</div>
+<div class="dlg" id="dlg" hidden>
+  <form id="form">
+    <h3>Nuova osservazione</h3>
+    <div class="layers" id="layers"></div>
+    <label for="txt" class="status">Cosa vedi, senti, tocchi in questo punto?</label>
+    <textarea id="txt" required maxlength="400"></textarea>
+    <div class="row"><button type="button" class="btn" id="cancel">Annulla</button><button class="btn pri" id="save">Salva</button></div>
+  </form>
+</div>
+<script>
+const LAYERS=[["topo","Topografia","var(--topo)"],["luce","Luce","var(--luce)"],["acu","Acustica","var(--acu)"],["mat","Materia","var(--mat)"],["lir","Lirica del luogo","var(--lir)"]];
+const L=Object.fromEntries(LAYERS.map(l=>[l[0],l]));
+const $=id=>document.getElementById(id);
+const KEY="ecostage-mappa-v1";
+const on=new Set(LAYERS.map(l=>l[0]));
+let notes=[],sel=null,pending=null;
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY)||"{}");notes=Array.isArray(s.notes)?s.notes:[];$("who").value=s.who||""}catch{notes=[]}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({notes,who:$("who").value}))}catch{$("status").textContent="Attenzione: questo browser non salva i dati. Esporta le note prima di chiudere."}}
+function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+$("filters").innerHTML=LAYERS.map(([k,n,c])=>`<button class="chip" data-k="${k}" aria-pressed="true" style="--c:${c}"><i></i>${n}</button>`).join("");
+$("layers").innerHTML=LAYERS.map(([k,n],i)=>`<label><input type="radio" name="layer" value="${k}" ${i===0?"checked":""}>${n}</label>`).join("");
+$("filters").onclick=e=>{const b=e.target.closest(".chip");if(!b)return;const k=b.dataset.k;on.has(k)?on.delete(k):on.add(k);b.setAttribute("aria-pressed",on.has(k));render()};
+function render(){
+  const plan=$("plan");plan.querySelectorAll(".pin").forEach(p=>p.remove());
+  const vis=notes.filter(n=>on.has(n.layer));
+  $("empty").hidden=notes.length>0;
+  const authors=new Set(notes.map(n=>n.author||"—"));
+  $("status").textContent=notes.length?`${notes.length} osservazioni · ${authors.size} ${authors.size===1?"autore":"autori"}`:"";
+  vis.forEach(n=>{const b=document.createElement("button");b.className="pin"+(sel===n.id?" sel":"");b.style.left=n.x+"%";b.style.top=n.y+"%";b.style.setProperty("--c",L[n.layer][2]);b.title=L[n.layer][1];b.setAttribute("aria-label",L[n.layer][1]+": "+n.text);b.onclick=e=>{e.stopPropagation();sel=n.id;render();document.getElementById("note-"+n.id)?.scrollIntoView({block:"nearest",behavior:"smooth"})};plan.appendChild(b)});
+  $("list").innerHTML=LAYERS.filter(l=>on.has(l[0])).map(([k,n,c])=>{const g=vis.filter(x=>x.layer===k);
+    return `<section class="grp" style="--c:${c}"><h2><i></i>${n} <small>${g.length}</small></h2>${g.length?g.map(x=>`<div class="note${sel===x.id?" sel":""}" id="note-${x.id}"><span>${esc(x.text)}</span><span class="meta"><span>${esc(x.author||"Senza nome")}</span><button data-del="${x.id}">Elimina</button></span></div>`).join(""):`<p class="none">Ancora nessuna nota.</p>`}</section>`}).join("");
+}
+$("list").onclick=e=>{const id=e.target.dataset?.del;if(!id)return;notes=notes.filter(n=>n.id!==id);save();render()};
+function openAt(ev){const r=$("plan").getBoundingClientRect();const x=ev.clientX?((ev.clientX-r.left)/r.width*100):50,y=ev.clientY?((ev.clientY-r.top)/r.height*100):50;
+  pending={x:Math.max(2,Math.min(98,x)),y:Math.max(2,Math.min(98,y))};$("txt").value="";$("dlg").hidden=false;$("txt").focus()}
+$("plan").onclick=openAt;$("plan").onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openAt({})}};
+$("cancel").onclick=()=>{$("dlg").hidden=true;pending=null};
+$("form").onsubmit=e=>{e.preventDefault();const text=$("txt").value.trim();if(!text||!pending)return;
+  notes.push({id:uid(),layer:document.querySelector('input[name="layer"]:checked').value,text,x:+pending.x.toFixed(1),y:+pending.y.toFixed(1),author:$("who").value.trim(),ts:Date.now()});
+  save();$("dlg").hidden=true;pending=null;render()};
+$("who").onchange=save;
+function download(name,content,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+function slug(s){return (s||"partecipante").normalize("NFD").replace(/[^\w]+/g,"-").replace(/^-|-$/g,"").toLowerCase()||"partecipante"}
+$("exp").onclick=()=>{const me=$("who").value.trim();if(!me){$("status").textContent="Scrivi il tuo nome prima di esportare.";$("who").focus();return}
+  const mine=notes.filter(n=>(n.author||"")===me);if(!mine.length){$("status").textContent="Non ci sono note con il tuo nome da esportare.";return}
+  download(`mappa-${slug(me)}.json`,JSON.stringify({app:"ecostage-mappa",v:1,notes:mine},null,1),"application/json");$("status").textContent=`Esportate ${mine.length} note. Invia il file al coordinatore.`};
+$("imp").onchange=async e=>{let added=0,bad=0;const ids=new Set(notes.map(n=>n.id));
+  for(const f of e.target.files){try{const d=JSON.parse(await f.text());for(const n of (d.notes||[])){if(!L[n.layer]||typeof n.text!=="string"||ids.has(n.id))continue;notes.push({id:String(n.id||uid()),layer:n.layer,text:n.text.slice(0,400),x:Math.max(0,Math.min(100,+n.x||50)),y:Math.max(0,Math.min(100,+n.y||50)),author:String(n.author||"").slice(0,40),ts:+n.ts||Date.now()});ids.add(n.id);added++}}catch{bad++}}
+  e.target.value="";save();render();$("status").textContent=`Importate ${added} nuove note`+(bad?` · ${bad} file non leggibili`:"")};
+$("csv").onclick=()=>{if(!notes.length){$("status").textContent="La mappa è vuota.";return}
+  const q=s=>`"${String(s).replace(/"/g,'""')}"`;const rows=[["Livello","Nota","Autore","X %","Y %","Data"],...notes.map(n=>[L[n.layer][1],n.text,n.author||"",n.x,n.y,new Date(n.ts).toLocaleString("it-IT")])];
+  download("mappa-sopralluogo.csv","﻿"+rows.map(r=>r.map(q).join(";")).join("\n"),"text/csv")};
+$("clear").onclick=()=>{$("confirm").hidden=false};$("no").onclick=()=>{$("confirm").hidden=true};
+$("yes").onclick=()=>{notes=[];save();render();$("confirm").hidden=true};
+load();render();
+</script>
+</body></html>
